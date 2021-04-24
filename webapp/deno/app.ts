@@ -1,4 +1,4 @@
-import { Application, Router, helpers } from "https://deno.land/x/oak/mod.ts";
+import { Application, Router, helpers } from "https://deno.land/x/oak@v6.5.1/mod.ts";
 import { Client } from "https://deno.land/x/mysql/mod.ts";
 import { sprintf } from "https://deno.land/std/fmt/printf.ts";
 import { organ } from "https://deno.land/x/organ/mod.ts";
