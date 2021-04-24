@@ -16,8 +16,8 @@
 - name: Clone isucon10-qualify
   become: no
   git:
-    repo: https://github.com/isucon/isucon10-qualify.git
-    version: master
+    repo: https://github.com/matsuu/isucon10-qualify.git
+    version: fixed
     dest: /tmp/isucon10-qualify
     accept_hostkey: yes
 
