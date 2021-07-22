@@ -701,7 +701,7 @@ func postEstate(c echo.Context) error {
 		})
 	}
 
-	query := `INSERT INTO estate (id, name, description, thumbnail, address, latitude, longitude, rent, door_height, door_width, features, popularity) VALUES (:id, :name, :description, :thumbnail, :address,: latitude, :longitude, :rent, :door_height, :door_width, :features, :popularity)`
+	query := `INSERT INTO estate (id, name, description, thumbnail, address, latitude, longitude, rent, door_height, door_width, features, popularity) VALUES (:id, :name, :description, :thumbnail, :address, :latitude, :longitude, :rent, :door_height, :door_width, :features, :popularity)`
   _, err = db.NamedExec(query, estates)
 
 	if err != nil {
