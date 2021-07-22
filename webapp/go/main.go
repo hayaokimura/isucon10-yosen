@@ -885,10 +885,10 @@ func searchEstateNazotte(c echo.Context) error {
 		return c.NoContent(http.StatusInternalServerError)
 	}
 
-	estateIds := make([]int64, len(estatesInBoundingBox))
+	estateIds := []int64{}
 
-	for i, values := range estatesInBoundingBox {
-		estateIds[i] = values.ID
+	for _, values := range estatesInBoundingBox {
+		estateIds = append(estateIds, values.ID)
 	}
 
 	query = fmt.Sprintf(`SELECT * FROM estate WHERE id IN (?) AND ST_Contains(ST_PolygonFromText(%s), ST_GeomFromText(concat("POINT(", latitude, " ", longitude, ")")))`, coordinates.coordinatesToText())
