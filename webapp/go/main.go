@@ -17,7 +17,9 @@ import (
 	"github.com/jmoiron/sqlx"
 	"github.com/labstack/echo"
 	"github.com/labstack/echo/middleware"
+	"github.com/newrelic/go-agent/v3/integrations/nrecho-v3"
 	"github.com/labstack/gommon/log"
+	"github.com/newrelic/go-agent/v3/newrelic"
 )
 
 const Limit = 20
@@ -239,6 +241,11 @@ func init() {
 }
 
 func main() {
+	app, _ := newrelic.NewApplication(
+	    newrelic.ConfigAppName("isucon10-1-go"),
+	    newrelic.ConfigLicense(os.Getenv("NEWRELIC_KEY")),
+	    newrelic.ConfigDistributedTracerEnabled(true),
+    	)
 	// Echo instance
 	e := echo.New()
 	e.Debug = true
@@ -247,6 +254,7 @@ func main() {
 	// Middleware
 	e.Use(middleware.Logger())
 	e.Use(middleware.Recover())
+	e.Use(nrecho.Middleware(app))
 
 	// Initialize
 	e.POST("/initialize", initialize)
