@@ -885,24 +885,38 @@ func searchEstateNazotte(c echo.Context) error {
 		return c.NoContent(http.StatusInternalServerError)
 	}
 
-	estatesInPolygon := []Estate{}
-	for _, estate := range estatesInBoundingBox {
-		validatedEstate := Estate{}
+	estateIds := make([]int64, len(estatesInBoundingBox));
 
-		point := fmt.Sprintf("'POINT(%f %f)'", estate.Latitude, estate.Longitude)
-		query := fmt.Sprintf(`SELECT * FROM estate WHERE id = ? AND ST_Contains(ST_PolygonFromText(%s), ST_GeomFromText(%s))`, coordinates.coordinatesToText(), point)
-		err = db.Get(&validatedEstate, query, estate.ID)
-		if err != nil {
-			if err == sql.ErrNoRows {
-				continue
-			} else {
-				c.Echo().Logger.Errorf("db access is failed on executing validate if estate is in polygon : %v", err)
-				return c.NoContent(http.StatusInternalServerError)
-			}
-		} else {
-			estatesInPolygon = append(estatesInPolygon, validatedEstate)
-		}
+	for i, values := range estatesInBoundingBox {
+		estateIds[i] = values.ID
 	}
+
+	query = fmt.Sprintf(`SELECT * FROM estate WHERE id in ? AND ST_Contains(ST_PolygonFromText(%s), ST_GeomFromText(concat("POINT(", latitude, " ", longitude, ")"))`, coordinates.coordinatesToText())
+	query, params, err := sqlx.In(query, []int{1,2,3,4,5})
+
+	estatesInPolygon := []Estate{}
+	if err := db.Select(&estatesInPolygon, query, params...); err != nil {
+		log.Fatal(err)
+	}
+
+	// estatesInPolygon := []Estate{}
+	// for _, estate := range estatesInBoundingBox {
+	// 	validatedEstate := Estate{}
+  //
+	// 	point := fmt.Sprintf("'POINT(%f %f)'", estate.Latitude, estate.Longitude)
+	// 	query := fmt.Sprintf(`SELECT * FROM estate WHERE id = ? AND ST_Contains(ST_PolygonFromText(%s), ST_GeomFromText(%s))`, coordinates.coordinatesToText(), point)
+	// 	err = db.Get(&validatedEstate, query, estate.ID)
+	// 	if err != nil {
+	// 		if err == sql.ErrNoRows {
+	// 			continue
+	// 		} else {
+	// 			c.Echo().Logger.Errorf("db access is failed on executing validate if estate is in polygon : %v", err)
+	// 			return c.NoContent(http.StatusInternalServerError)
+	// 		}
+	// 	} else {
+	// 		estatesInPolygon = append(estatesInPolygon, validatedEstate)
+	// 	}
+	// }
 
 	var re EstateSearchResponse
 	re.Estates = []Estate{}
