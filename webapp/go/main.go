@@ -665,47 +665,40 @@ func postEstate(c echo.Context) error {
 		return c.NoContent(http.StatusInternalServerError)
 	}
 
-	// estates := []Estate{};
-	estates := []map[string]interface{}{}
-
+	estates := []Estate{};
 	for _, row := range records {
 		rm := RecordMapper{Record: row}
 		id := rm.NextInt()
-		// name := rm.NextString()
-		// description := rm.NextString()
-		// thumbnail := rm.NextString()
-		// address := rm.NextString()
-		// latitude := rm.NextFloat()
-		// longitude := rm.NextFloat()
-		// rent := rm.NextInt()
-		// doorHeight := rm.NextInt()
-		// doorWidth := rm.NextInt()
-		// features := rm.NextString()
-		// popularity := rm.NextInt()
+		name := rm.NextString()
+		description := rm.NextString()
+		thumbnail := rm.NextString()
+		address := rm.NextString()
+		latitude := rm.NextFloat()
+		longitude := rm.NextFloat()
+		rent := rm.NextInt()
+		doorHeight := rm.NextInt()
+		doorWidth := rm.NextInt()
+		features := rm.NextString()
+		popularity := rm.NextInt()
 		if err := rm.Err(); err != nil {
 			c.Logger().Errorf("failed to read record: %v", err)
 			return c.NoContent(http.StatusBadRequest)
 		}
 
-
-		estates = append(estates, map[string]interface{}{
-			"id": int64(id),
+		estates = append(estates, Estate{
+			ID: int64(id),
+			Thumbnail: thumbnail,
+			Name: name,
+			Description: description,
+			Latitude: latitude,
+			Longitude: longitude,
+			Address: address,
+			Rent: int64(rent),
+			DoorHeight: int64(doorHeight),
+			DoorWidth: int64(doorWidth),
+			Features: features,
+			Popularity: int64(popularity),
 		})
-
-		// estates = append(estates, Estate{
-		// 	ID: int64(id),
-		// 	Thumbnail: thumbnail,
-		// 	Name: name,
-		// 	Description: description,
-		// 	Latitude: latitude,
-		// 	Longitude: longitude,
-		// 	Address: address,
-		// 	Rent: int64(rent),
-		// 	DoorHeight: int64(doorHeight),
-		// 	DoorWidth: int64(doorWidth),
-		// 	Features: features,
-		// 	Popularity: int64(popularity),
-		// })
 	}
 
 	query := `INSERT INTO estate (id) VALUES (:id)`
