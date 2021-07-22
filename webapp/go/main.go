@@ -894,6 +894,10 @@ func searchEstateNazotte(c echo.Context) error {
 	query = fmt.Sprintf(`SELECT * FROM estate WHERE id IN (?) AND ST_Contains(ST_PolygonFromText(%s), ST_GeomFromText(concat("POINT(", latitude, " ", longitude, ")"))`, coordinates.coordinatesToText())
 	query, params, err := sqlx.In(query, estateIds)
 
+	fmt.Println("===================================")
+	fmt.Println(query)
+	fmt.Println("===================================")
+
 	estatesInPolygon := []Estate{}
 	if err := db.Select(&estatesInPolygon, query, params...); err != nil {
 		log.Fatal(err)
