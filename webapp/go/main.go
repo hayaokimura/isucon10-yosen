@@ -665,12 +665,7 @@ func postEstate(c echo.Context) error {
 		return c.NoContent(http.StatusInternalServerError)
 	}
 
-	tx, err := db.Begin()
-	if err != nil {
-		c.Logger().Errorf("failed to begin tx: %v", err)
-		return c.NoContent(http.StatusInternalServerError)
-	}
-	defer tx.Rollback()
+	estates := []Estate{};
 	for _, row := range records {
 		rm := RecordMapper{Record: row}
 		id := rm.NextInt()
@@ -689,14 +684,28 @@ func postEstate(c echo.Context) error {
 			c.Logger().Errorf("failed to read record: %v", err)
 			return c.NoContent(http.StatusBadRequest)
 		}
-		_, err := tx.Exec("INSERT INTO estate(id, name, description, thumbnail, address, latitude, longitude, rent, door_height, door_width, features, popularity) VALUES(?,?,?,?,?,?,?,?,?,?,?,?)", id, name, description, thumbnail, address, latitude, longitude, rent, doorHeight, doorWidth, features, popularity)
-		if err != nil {
-			c.Logger().Errorf("failed to insert estate: %v", err)
-			return c.NoContent(http.StatusInternalServerError)
-		}
+
+		estates = append(estates, Estate{
+			ID: int64(id),
+			Thumbnail:   thumbnail,
+			Name: name,
+			Description: description,
+			Latitude: latitude,
+			Longitude: longitude,
+			Address: address     ,
+			Rent: int64(rent),
+			DoorHeight: int64(doorHeight),
+			DoorWidth: int64(doorWidth),
+			Features: features,
+			Popularity: int64(popularity),
+		})
 	}
-	if err := tx.Commit(); err != nil {
-		c.Logger().Errorf("failed to commit tx: %v", err)
+
+	query := `INSERT INTO estate(id, name, description, thumbnail, address, latitude, longitude, rent, door_height, door_width, features, popularity) VALUES (:id, :thumbnail, :name, :description, :latitude, :longitude, :address, :rent, :doorHeight, :doorWidth, :features, :popularity)`
+  _, err = db.NamedExec(query, estates)
+
+	if err != nil {
+		c.Logger().Errorf("failed to insert estate: %v", err)
 		return c.NoContent(http.StatusInternalServerError)
 	}
 	return c.NoContent(http.StatusCreated)
