@@ -42,3 +42,12 @@ CREATE TABLE isuumo.chair
     stock       INTEGER         NOT NULL
 );
 
+alter table isuumo.chair add index (stock);
+alter table isuumo.chair add index (price);
+alter table isuumo.chair add index (features);
+alter table isuumo.chair add index (color);
+alter table isuumo.chair add index (kind);
+alter table isuumo.chair add index (depth);
+alter table isuumo.chair add index (height);
+alter table isuumo.chair add index (width);
+alter table isuumo.chair add index (popularity);
