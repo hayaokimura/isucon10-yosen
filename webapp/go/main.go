@@ -895,6 +895,7 @@ func searchEstateNazotte(c echo.Context) error {
 	query, params, err := sqlx.In(query, estateIds)
 
 	fmt.Println("===================================")
+	fmt.Println(err)
 	fmt.Println(query)
 	fmt.Println("===================================")
 
