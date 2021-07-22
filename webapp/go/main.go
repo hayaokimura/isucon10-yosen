@@ -687,12 +687,12 @@ func postEstate(c echo.Context) error {
 
 		estates = append(estates, Estate{
 			ID: int64(id),
-			Thumbnail:   thumbnail,
+			Thumbnail: thumbnail,
 			Name: name,
 			Description: description,
 			Latitude: latitude,
 			Longitude: longitude,
-			Address: address     ,
+			Address: address,
 			Rent: int64(rent),
 			DoorHeight: int64(doorHeight),
 			DoorWidth: int64(doorWidth),
@@ -701,7 +701,7 @@ func postEstate(c echo.Context) error {
 		})
 	}
 
-	query := `INSERT INTO estate(id, name, description, thumbnail, address, latitude, longitude, rent, door_height, door_width, features, popularity) VALUES (:id, :thumbnail, :name, :description, :latitude, :longitude, :address, :rent, :doorHeight, :doorWidth, :features, :popularity)`
+	query := `INSERT INTO estate(id, name, description, thumbnail, address, latitude, longitude, rent, door_height, door_width, features, popularity) VALUES (:id, :name, :description, :description, :thumbnail, :address,: latitude, :longitude, :rent, :doorHeight, :doorWidth, :features, :popularity)`
   _, err = db.NamedExec(query, estates)
 
 	if err != nil {
