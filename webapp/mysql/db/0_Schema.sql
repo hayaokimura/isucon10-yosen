@@ -23,6 +23,7 @@ alter table isuumo.estate add index (door_height);
 alter table isuumo.estate add index (door_width);
 alter table isuumo.estate add index (rent);
 alter table isuumo.estate add index (features);
+alter table isuumo.estate add index nazotte_index(latitude, longitude, popularity);
 
 CREATE TABLE isuumo.chair
 (

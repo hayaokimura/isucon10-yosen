@@ -7,8 +7,6 @@ warn() {
 TARGET=$1
 BRANCH=$2
 
-git add .
-git commit -m "update"
 git push origin $2
 
 ssh $TARGET "sudo -u isucon /home/isucon/isuumo/deploy $BRANCH"
