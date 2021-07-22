@@ -874,9 +874,9 @@ func searchEstateNazotte(c echo.Context) error {
 	}
 
 	b := coordinates.getBoundingBox()
-	estatesInBoundingBox := []Estate{}
-	query := `SELECT * FROM estate WHERE latitude <= ? AND latitude >= ? AND longitude <= ? AND longitude >= ? ORDER BY popularity DESC, id ASC`
-	err = db.Select(&estatesInBoundingBox, query, b.BottomRightCorner.Latitude, b.TopLeftCorner.Latitude, b.BottomRightCorner.Longitude, b.TopLeftCorner.Longitude)
+	estatesInPolygon := []Estate{}
+	query := fmt.Sprintf(`SELECT * FROM estate WHERE latitude <= ? AND latitude >= ? AND longitude <= ? AND longitude >= ? AND ST_Contains(ST_PolygonFromText(%s), ST_GeomFromText(concat("POINT(", latitude, " ", longitude, ")"))) ORDER BY popularity DESC, id ASC`, coordinates.coordinatesToText())
+	err = db.Select(&estatesInPolygon, query, b.BottomRightCorner.Latitude, b.TopLeftCorner.Latitude, b.BottomRightCorner.Longitude, b.TopLeftCorner.Longitude)
 	if err == sql.ErrNoRows {
 		c.Echo().Logger.Infof("select * from estate where latitude ...", err)
 		return c.JSON(http.StatusOK, EstateSearchResponse{Count: 0, Estates: []Estate{}})
@@ -885,23 +885,23 @@ func searchEstateNazotte(c echo.Context) error {
 		return c.NoContent(http.StatusInternalServerError)
 	}
 
-	estateIds := []int64{}
+	// estateIds := []int64{}
 
-	for _, values := range estatesInBoundingBox {
-		estateIds = append(estateIds, values.ID)
-	}
+	// for _, values := range estatesInBoundingBox {
+	// 	estateIds = append(estateIds, values.ID)
+	// }
 
-	estatesInPolygon := []Estate{}
-	if len(estateIds) != 0 {
-		query = fmt.Sprintf(`SELECT * FROM estate WHERE id IN (?) AND ST_Contains(ST_PolygonFromText(%s), ST_GeomFromText(concat("POINT(", latitude, " ", longitude, ")"))) ORDER BY popularity DESC, id ASC`, coordinates.coordinatesToText())
-		query, params, err := sqlx.In(query, estateIds)
+	// estatesInPolygon := []Estate{}
+	// if len(estateIds) != 0 {
+	// 	query = fmt.Sprintf(`SELECT * FROM estate WHERE id IN (?) AND ST_Contains(ST_PolygonFromText(%s), ST_GeomFromText(concat("POINT(", latitude, " ", longitude, ")"))) ORDER BY popularity DESC, id ASC`, coordinates.coordinatesToText())
+	// 	query, params, err := sqlx.In(query, estateIds)
 
-		err = db.Select(&estatesInPolygon, query, params...)
-		if err != nil && err != sql.ErrNoRows {
-			c.Echo().Logger.Errorf("db access is failed on executing validate if estate is in polygon : %v", err)
-			return c.NoContent(http.StatusInternalServerError)
-		}
-	}
+	// 	err = db.Select(&estatesInPolygon, query, params...)
+	// 	if err != nil && err != sql.ErrNoRows {
+	// 		c.Echo().Logger.Errorf("db access is failed on executing validate if estate is in polygon : %v", err)
+	// 		return c.NoContent(http.StatusInternalServerError)
+	// 	}
+	// }
 
 	// estatesInPolygon := []Estate{}
 	// for _, estate := range estatesInBoundingBox {
