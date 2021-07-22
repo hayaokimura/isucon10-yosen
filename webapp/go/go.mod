@@ -14,6 +14,7 @@ require (
 	github.com/newrelic/go-agent v3.14.1+incompatible // indirect
 	github.com/newrelic/go-agent/v3 v3.14.1
 	github.com/newrelic/go-agent/v3/integrations/nrecho-v3 v1.0.1
+	github.com/newrelic/go-agent/v3/integrations/nrmysql v1.2.1 // indirect
 	github.com/sirupsen/logrus v1.8.1 // indirect
 	github.com/stretchr/testify v1.5.1
 	github.com/valyala/fasttemplate v1.1.0 // indirect

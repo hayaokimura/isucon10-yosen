@@ -13,13 +13,15 @@ import (
 	"strconv"
 	"strings"
 
-	_ "github.com/go-sql-driver/mysql"
+	// _ "github.com/go-sql-driver/mysql"
 	"github.com/jmoiron/sqlx"
 	"github.com/labstack/echo"
 	"github.com/labstack/echo/middleware"
 	"github.com/labstack/gommon/log"
 	nrecho "github.com/newrelic/go-agent/v3/integrations/nrecho-v3"
 	"github.com/newrelic/go-agent/v3/newrelic"
+	_ "github.com/newrelic/go-agent/v3/integrations/nrmysql"
+
 )
 
 const Limit = 20
@@ -221,7 +223,9 @@ func getEnv(key, defaultValue string) string {
 //ConnectDB isuumoデータベースに接続する
 func (mc *MySQLConnectionEnv) ConnectDB() (*sqlx.DB, error) {
 	dsn := fmt.Sprintf("%v:%v@tcp(%v:%v)/%v", mc.User, mc.Password, mc.Host, mc.Port, mc.DBName)
-	return sqlx.Open("mysql", dsn)
+
+	return sqlx.Open("nrmysql", dsn)
+	// return sqlx.Open("mysql", dsn)
 }
 
 func init() {
