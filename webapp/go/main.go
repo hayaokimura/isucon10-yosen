@@ -900,7 +900,7 @@ func searchEstateNazotte(c echo.Context) error {
 
 	estatesInPolygon := []Estate{}
 	err = db.Select(&estatesInPolygon, query, params...)
-	if err != sql.ErrNoRows {
+	if err != nil && err != sql.ErrNoRows {
 		c.Echo().Logger.Errorf("db access is failed on executing validate if estate is in polygon : %v", err)
 		return c.NoContent(http.StatusInternalServerError)
 	}
